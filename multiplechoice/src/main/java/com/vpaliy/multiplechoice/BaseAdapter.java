@@ -15,6 +15,7 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.BaseV
     private MultiMode mode;
     private final StateTracker tracker;
 
+    private boolean isScreenRotation=false;
     private boolean isAnimationEnabled=false;
 
 
@@ -33,10 +34,14 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.BaseV
             throw new IllegalArgumentException();
         }
 
-        if(tracker.getCheckedItemCount()!=0) {
+        isScreenRotation=true;
+
+        if(tracker.getCheckedItemCount()>0) {
             mode.turnOn();
+        }else {
+            isScreenRotation = false;
         }
-        //let's give it a try
+
         notifyDataSetChanged();
     }
 
@@ -52,6 +57,12 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.BaseV
         }
 
         public final void determineState() {
+            if(isScreenRotation) {
+                isScreenRotation=false;
+                if(mode.isActivated()) {
+                    mode.update(tracker.getCheckedItemCount());
+                }
+            }
 
             if(isAnimationEnabled) {
                 switch (tracker.getStateFor(getAdapterPosition())) {
@@ -97,11 +108,11 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.BaseV
         public void onClick(View view) {
             if(mode.isActivated()) {
                 tracker.check(getAdapterPosition());
-                determineState();
                 mode.update(tracker.getCheckedItemCount());
-                if(tracker.getCheckedItemCount()==0) {
+                if (tracker.getCheckedItemCount() == 0) {
                     mode.turnOff();
                 }
+                determineState();
             }
         }
 

@@ -12,6 +12,7 @@ import android.support.annotation.StyleableRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.PermissionChecker;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -184,7 +185,6 @@ public class MultiMode {
         if(actionBar.getAlpha()<1.f) {
             actionBar.setAlpha(1.f);
         }
-
 
         actionBar.inflateMenu(currentState.menuId);
 
