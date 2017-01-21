@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
         MultiMode mode=new MultiMode.Builder(actionBar,R.menu.list_menu)
                         .setColor(Color.WHITE)
                         .build();
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter=new Adapter(this,mode,rawData));
 
     }

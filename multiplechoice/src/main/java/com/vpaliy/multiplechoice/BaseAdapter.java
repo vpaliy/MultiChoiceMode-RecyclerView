@@ -57,7 +57,6 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.BaseV
         @CallSuper
         public void enterState() {
             tracker.setStateFor(getAdapterPosition(),StateTracker.ANIMATED);
-            // animationState=ANIMATED;
         }
 
 
@@ -129,7 +128,7 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.BaseV
         }
         if(mode.isActivated()) {
             Log.d(TAG,"After canceling:"+Integer.toString(tracker.getCheckedItemCount()));
-            mode.turnOff(); //not supposed to happen
+            mode.turnOff();
         }
     }
 

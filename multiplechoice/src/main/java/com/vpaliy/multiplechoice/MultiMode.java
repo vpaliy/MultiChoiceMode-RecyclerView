@@ -66,7 +66,7 @@ public class MultiMode {
         Context context=toolbar.getContext();
         TypedValue typedValue = new TypedValue();
         TypedArray attr = context.obtainStyledAttributes(typedValue.data,
-            new int[] {R.attr.colorPrimary, R.attr.colorPrimaryDark});
+                new int[] {R.attr.colorPrimary, R.attr.colorPrimaryDark});
         if(attr!=null) {
             if (prevState.toolbarColor > 0) {
                 prevState.toolbarColor = attr.getColor(0, 0);
@@ -95,15 +95,15 @@ public class MultiMode {
 
     private class ToolbarState {
 
-        private int menuId;
-        private int statusBarColor;
-        private int toolbarColor=-1;
+        int menuId;
+        int statusBarColor;
+        int toolbarColor=-1;
 
-        private Drawable logo;
-        private Drawable navigationIcon;
+        Drawable logo;
+        Drawable navigationIcon;
 
-        private String title;
-        private String subTitle;
+        String title;
+        String subTitle;
 
     }
 
