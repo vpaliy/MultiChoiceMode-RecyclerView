@@ -4,6 +4,7 @@ package com.vpaliy.multiplechoice;
 import android.Manifest;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Vibrator;
@@ -27,7 +28,7 @@ public class MultiMode {
     private ToolbarState prevState;
 
     private boolean isActivated=false;
-
+    private boolean isColored=false;
     private Vibrator vibrator;
 
 
@@ -54,6 +55,7 @@ public class MultiMode {
         currentState.title=builder.title;
         currentState.subTitle=EMPTY;
         currentState.menuId=builder.menuId;
+        currentState.toolbarColor = builder.toolbarColor;
     }
 
     private ToolbarState initPrevState(Toolbar toolbar) {
@@ -111,14 +113,17 @@ public class MultiMode {
         private static final String DEFAULT_TITLE=" items selected";
 
         private Toolbar toolbar;
-        private int menuId;
         private String title=DEFAULT_TITLE;
-
+        private int toolbarColor=-1;
         private int icon;
+        private int menuId;
 
         public Builder(@NonNull Toolbar toolbar, int menuId) {
             this.toolbar=toolbar;
             this.menuId=menuId;
+            if(toolbar.getBackground()!=null) {
+                toolbarColor=((ColorDrawable)(toolbar.getBackground())).getColor();
+            }
         }
 
         public Builder setMenuId(int menuId) {
@@ -130,6 +135,11 @@ public class MultiMode {
             if(icon>0) {
                 this.icon = icon;
             }
+            return this;
+        }
+
+        public Builder setColor(int color) {
+            this.toolbarColor = color;
             return this;
         }
 
@@ -146,9 +156,6 @@ public class MultiMode {
 
 
     void turnOn() {
-        if(vibrator!=null) {
-            vibrator.vibrate(10);
-        }
         isActivated=true;
 
         if(actionBar.getTranslationX()!=0.f||actionBar.getTranslationY()!=0.f) {
@@ -171,11 +178,18 @@ public class MultiMode {
         if(vibrator!=null) {
             vibrator.vibrate(10);
         }
+
         actionBar.setTitle(Integer.toString(itemCount)+currentState.title);
+        if(!isColored) {
+            isColored = true;
+            actionBar.setBackgroundColor(currentState.toolbarColor);
+        }
     }
 
     void turnOff() {
         isActivated=false;
+        isColored=false;
+        actionBar.setBackgroundColor(prevState.toolbarColor);
         actionBar.setTitle(prevState.title);
         actionBar.setSubtitle(prevState.subTitle);
     }

@@ -124,7 +124,7 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.BaseV
         for(int index=0;index<getItemCount();index++) {
             if(isChecked(index)) {
                 tracker.setStateFor(index, animate ? StateTracker.EXIT : StateTracker.DEFAULT);
-                this.notifyItemChanged(index);
+                notifyItemChanged(index);
             }
         }
         if(mode.isActivated()) {

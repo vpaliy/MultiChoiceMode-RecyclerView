@@ -25,6 +25,9 @@ class StateTracker {
 
     public void setStateFor(int position, int state) {
         if(stateMap.get(position)==null) {
+            if(state==EXIT||state==DEFAULT) {
+                return; //must be a mistake, so go back
+            }
             stateMap.put(position, state);
             checkedItemCount++;
         }else {

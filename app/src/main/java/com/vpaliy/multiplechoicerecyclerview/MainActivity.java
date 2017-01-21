@@ -1,6 +1,7 @@
 package com.vpaliy.multiplechoicerecyclerview;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -46,7 +47,8 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new GridLayoutManager(this,getResources().
             getInteger(R.integer.span_size),GridLayoutManager.VERTICAL,false));
         MultiMode mode=new MultiMode.Builder(actionBar,R.menu.list_menu)
-            .build();
+                        .setColor(Color.WHITE)
+                        .build();
         recyclerView.setAdapter(adapter=new Adapter(this,mode,rawData));
 
     }
