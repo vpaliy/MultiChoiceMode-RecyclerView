@@ -4,7 +4,6 @@ package com.vpaliy.multiplechoice;
 import android.Manifest;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Vibrator;
@@ -14,7 +13,12 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.PermissionChecker;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class MultiMode {
 
@@ -29,10 +33,9 @@ public class MultiMode {
 
     private boolean isActivated=false;
     private boolean isColored=false;
+
     private Vibrator vibrator;
-
-
-
+    private int vibrationLength=10; //be default it's 10
 
     public MultiMode(Builder builder) {
         this.actionBar=builder.toolbar;
@@ -90,6 +93,15 @@ public class MultiMode {
         prevState.logo=toolbar.getLogo();
         prevState.navigationIcon=toolbar.getNavigationIcon();
 
+        Menu menu=toolbar.getMenu();
+        if(menu!=null) {
+            if(menu.size()>0) {
+                prevState.menuItems=new HashSet<>(menu.size());
+                for(int index=0;index<menu.size();index++) {
+                    prevState.menuItems.add(menu.getItem(index));
+                }
+            }
+        }
         return prevState;
     }
 
@@ -104,6 +116,8 @@ public class MultiMode {
 
         String title;
         String subTitle;
+
+        Set<MenuItem> menuItems;
 
     }
 
@@ -171,12 +185,21 @@ public class MultiMode {
             actionBar.setAlpha(1.f);
         }
 
+
         actionBar.inflateMenu(currentState.menuId);
+
+    }
+
+    void update(int itemCount, int vibrationLength) {
+        if(vibrationLength>0) {
+            this.vibrationLength=vibrationLength;
+        }
+        update(itemCount);
     }
 
     void update(int itemCount) {
         if(vibrator!=null) {
-            vibrator.vibrate(10);
+            vibrator.vibrate(vibrationLength);
         }
 
         actionBar.setTitle(Integer.toString(itemCount)+currentState.title);
@@ -189,6 +212,15 @@ public class MultiMode {
     void turnOff() {
         isActivated=false;
         isColored=false;
+
+        Menu menu=actionBar.getMenu();
+        for(int index=0;index<menu.size();index++) {
+            MenuItem item=menu.getItem(index);
+            if(prevState.menuItems==null||!prevState.menuItems.contains(item)) {
+                menu.removeItem(item.getItemId());
+            }
+        }
+
         actionBar.setBackgroundColor(prevState.toolbarColor);
         actionBar.setTitle(prevState.title);
         actionBar.setSubtitle(prevState.subTitle);

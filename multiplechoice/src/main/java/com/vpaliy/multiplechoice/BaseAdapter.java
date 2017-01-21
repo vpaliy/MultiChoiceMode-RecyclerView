@@ -1,5 +1,6 @@
 package com.vpaliy.multiplechoice;
 
+import android.os.Bundle;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -9,9 +10,10 @@ import android.view.View;
 public abstract class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.BaseViewHolder> {
 
     private static final String TAG=BaseAdapter.class.getSimpleName();
+    private static final String KEY="baseAdapter:stateTracker";
 
     private MultiMode mode;
-    private final StateTracker tracker=new StateTracker();
+    private final StateTracker tracker;
 
     private boolean isAnimationEnabled=false;
 
@@ -19,6 +21,23 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.BaseV
     public BaseAdapter(@NonNull MultiMode mode, boolean isAnimationEnabled) {
         this.mode=mode;
         this.isAnimationEnabled=isAnimationEnabled;
+        this.tracker=new StateTracker();
+    }
+
+    //This constructor must be  called only to restore previous state
+    public BaseAdapter(@NonNull MultiMode mode, boolean isAnimationEnabled, @NonNull Bundle savedInstanceState) {
+        this.mode=mode;
+        this.isAnimationEnabled=isAnimationEnabled;
+        tracker=savedInstanceState.getParcelable(KEY);
+        if(tracker==null) {
+            throw new IllegalArgumentException();
+        }
+
+        if(tracker.getCheckedItemCount()!=0) {
+            mode.turnOn();
+        }
+        //let's give it a try
+        notifyDataSetChanged();
     }
 
     public abstract class BaseViewHolder extends RecyclerView.ViewHolder
@@ -134,6 +153,13 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.BaseV
 
     public int[] getAllChecked() {
         return tracker.getSelectedItemArray();
+
     }
 
+    public void saveState(@NonNull Bundle outState) {
+        if(mode.isActivated()) {
+            mode.turnOff();
+        }
+        tracker.saveState(KEY,outState);
+    }
 }

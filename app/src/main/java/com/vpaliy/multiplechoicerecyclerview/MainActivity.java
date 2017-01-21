@@ -2,9 +2,9 @@ package com.vpaliy.multiplechoicerecyclerview;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -20,6 +20,8 @@ import com.vpaliy.multiplechoice.MultiMode;
 
 public class MainActivity extends AppCompatActivity {
 
+
+    private static final String TAG=MainActivity.class.getSimpleName();
     private Toolbar actionBar;
     private Adapter adapter;
 
@@ -28,15 +30,27 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        initUI();
+        initUI(savedInstanceState);
 
     }
 
-    private void initUI() {
+    private void initUI(Bundle savedInstanceState) {
 
         if(getSupportActionBar()==null) {
             actionBar = (Toolbar) (findViewById(R.id.actionBar));
             setSupportActionBar(actionBar);
+            if(getSupportActionBar()!=null) {
+                getSupportActionBar().setDisplayShowTitleEnabled(true);
+                getSupportActionBar().setHomeButtonEnabled(true);
+                getSupportActionBar().setShowHideAnimationEnabled(true);
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            }
+            actionBar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onBackPressed();
+                }
+            });
         }
 
         int[] rawData=new int[]{R.drawable.eleven, R.drawable.fifteen, R.drawable.five,
@@ -50,10 +64,16 @@ public class MainActivity extends AppCompatActivity {
         MultiMode mode=new MultiMode.Builder(actionBar,R.menu.list_menu)
                         .setColor(Color.WHITE)
                         .build();
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(adapter=new Adapter(this,mode,rawData));
+        recyclerView.setItemAnimator(null);
+        if(savedInstanceState!=null) {
+            adapter=new Adapter(this,mode,rawData,savedInstanceState);
+        }else {
+            adapter = new Adapter(this, mode, rawData);
+        }
+        recyclerView.setAdapter(adapter);
 
     }
+
 
     @Override
     public void onBackPressed() {
@@ -75,6 +95,12 @@ public class MainActivity extends AppCompatActivity {
 
         public Adapter(Context context,MultiMode mode, int[] arrayData) {
             super(mode,true);
+            inflater=LayoutInflater.from(context);
+            this.arrayData=arrayData;
+        }
+
+        public Adapter(Context context, MultiMode mode, int[] arrayData, @NonNull Bundle savedInstanceState) {
+            super(mode,true,savedInstanceState);
             inflater=LayoutInflater.from(context);
             this.arrayData=arrayData;
         }
@@ -151,7 +177,14 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public int getItemCount() {
-            return arrayData.length;
+            return 4*arrayData.length;
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        adapter.saveState(outState);
+        super.onSaveInstanceState(outState);
+
     }
 }
