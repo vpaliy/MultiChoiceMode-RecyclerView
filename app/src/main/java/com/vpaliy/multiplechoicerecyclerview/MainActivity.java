@@ -19,11 +19,11 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.vpaliy.multiplechoice.BaseAdapter;
 import com.vpaliy.multiplechoice.MultiMode;
 
+
 public class MainActivity extends AppCompatActivity {
 
 
     private static final String TAG=MainActivity.class.getSimpleName();
-    private Toolbar actionBar;
     private Adapter adapter;
 
     @Override
@@ -50,7 +50,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initUI(Bundle savedInstanceState) {
-        actionBar = (Toolbar) (findViewById(R.id.actionBar));
+        Toolbar actionBar = (Toolbar) (findViewById(R.id.actionBar));
+        actionBar.setTitle(R.string.example);
         setSupportActionBar(actionBar);
         if(getSupportActionBar()!=null) {
             getSupportActionBar().setDisplayShowTitleEnabled(true);
@@ -65,10 +66,25 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        final int[] rawList= new int[]{R.drawable.eleven, R.drawable.fifteen, R.drawable.five,
+
+        /** NOTE
+         * I could have used a simple List<Integer> here,
+         * which obviously would be a better option because I wouldn't have used so many time-consuming methods like Arrays.copyOfRange() or whatever
+         * However, If I had used List<Integer> in this case,
+         * I would end up with an exception every time when I try to use List.remove(int index) method
+         */
+        final int[] tempList= new int[]{R.drawable.eleven, R.drawable.fifteen, R.drawable.five,
                 R.drawable.four, R.drawable.fourteen, R.drawable.seven, R.drawable.seventeen,
                 R.drawable.six, R.drawable.sixteen, R.drawable.ten, R.drawable.thirt, R.drawable.three,
                 R.drawable.two};
+
+        final int[] rawList=new int[4*tempList.length];
+        for(int index=0;index<4;index++) {
+            for(int jIndex=0;jIndex<tempList.length;jIndex++) {
+                rawList[jIndex+(index*tempList.length)]=tempList[jIndex];
+            }
+        }
+
 
         RecyclerView recyclerView=(RecyclerView)(findViewById(R.id.recyclerView));
         recyclerView.setLayoutManager(new GridLayoutManager(this,getResources().
@@ -93,8 +109,8 @@ public class MainActivity extends AppCompatActivity {
                                 case R.id.delete: {
                                     int[] deleteIndices = adapter.getAllCheckedForDeletion();
                                     if(deleteIndices!=null) {
-                                        for(int index:deleteIndices) {
-                                        //    adapter.removeAt(index);
+                                        for (int index : deleteIndices) {
+                                            adapter.removeAt(index);
                                         }
                                     }
                                     return true;
@@ -236,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public int getItemCount() {
-            return 4*rawList.length;
+            return rawList.length;
         }
     }
 

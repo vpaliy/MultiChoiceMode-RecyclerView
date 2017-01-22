@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/first"
-        android:title="First"/>
-
-    <item
-        android:id="@+id/second"
-        android:title="Second"/>
-
-    <item
-        android:id="@+id/third"
-        android:title="Third"/>
+        android:id="@+id/mainItem"
+        android:title="@string/mainItem"/>
 
 </menu>

@@ -1,8 +1,13 @@
 <resources>
     <string name="app_name">MultipleChoiceRecyclerView</string>
-    <!-- Main menu -->
+    <string name="example">Example</string>
+    <!-- Adapter menu -->
     <string name="deselectItems">Deselect all</string>
     <string name="deleteItems">Delete</string>
     <string name="selectItems">Select all</string>
     <string name="shareItems">Share</string>
+
+    <!--Main menu -->
+    <string name="mainItem">Main</string>
+
 </resources>
