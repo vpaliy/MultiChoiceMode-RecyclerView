@@ -21,13 +21,15 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.BaseV
 
     public BaseAdapter(@NonNull MultiMode mode, boolean isAnimationEnabled) {
         this.mode=mode;
+        mode.setAdapter(this);
         this.isAnimationEnabled=isAnimationEnabled;
         this.tracker=new StateTracker();
     }
 
-    //This constructor must be  called only to restore previous state
+    //This constructor has to be called only to restore previous state
     public BaseAdapter(@NonNull MultiMode mode, boolean isAnimationEnabled, @NonNull Bundle savedInstanceState) {
         this.mode=mode;
+        mode.setAdapter(this);
         this.isAnimationEnabled=isAnimationEnabled;
         tracker=savedInstanceState.getParcelable(KEY);
         if(tracker==null) {
@@ -37,12 +39,20 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.BaseV
         isScreenRotation=true;
 
         if(tracker.getCheckedItemCount()>0) {
+            Log.d(TAG,"turnedOn()");
             mode.turnOn();
         }else {
             isScreenRotation = false;
         }
 
         notifyDataSetChanged();
+    }
+
+    public void onResume() {
+        if(tracker.getCheckedItemCount()>0) {
+            mode.turnOn();
+            mode.update(tracker.getCheckedItemCount());
+        }
     }
 
     public abstract class BaseViewHolder extends RecyclerView.ViewHolder
@@ -156,21 +166,26 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.BaseV
                 notifyItemChanged(index);
             }
         }
+
         if(mode.isActivated()) {
-            Log.d(TAG,"After canceling:"+Integer.toString(tracker.getCheckedItemCount()));
             mode.turnOff();
         }
     }
 
-    public int[] getAllChecked() {
-        return tracker.getSelectedItemArray();
-
+    public int[] getAllCheckedForDeletion() {
+        return tracker.getSelectedItemArray(true,true);
     }
 
+    public int[] getAllChecked(boolean cancel) {
+        return tracker.getSelectedItemArray(cancel,false);
+    }
+
+    //TODO also save a position of adapter
     public void saveState(@NonNull Bundle outState) {
         if(mode.isActivated()) {
             mode.turnOff();
         }
         tracker.saveState(KEY,outState);
     }
+
 }

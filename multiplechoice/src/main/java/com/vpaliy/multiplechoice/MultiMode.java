@@ -2,10 +2,12 @@ package com.vpaliy.multiplechoice;
 
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.annotation.StyleableRes;
@@ -17,17 +19,26 @@ import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
+
+
 
 public class MultiMode {
 
     private static final String TAG=MultiMode.class.getSimpleName();
 
     private static final String EMPTY="";
+    private static BaseAdapter adapterInstance;
 
     private Toolbar actionBar;
+    private Activity activity;
+    private Callback callback;
 
     private ToolbarState currentState;
     private ToolbarState prevState;
@@ -41,6 +52,8 @@ public class MultiMode {
     public MultiMode(Builder builder) {
         this.actionBar=builder.toolbar;
         this.prevState=initPrevState(actionBar);
+        this.activity=builder.activity;
+        this.callback=builder.callback;
         initCurrentState(builder);
         initVibrator();
     }
@@ -55,11 +68,14 @@ public class MultiMode {
     }
 
     private void initCurrentState(Builder builder) {
-        this.currentState=new ToolbarState();
+        currentState=new ToolbarState();
         currentState.title=builder.title;
         currentState.subTitle=EMPTY;
         currentState.menuId=builder.menuId;
+        currentState.statusBarColor=builder.statusBarColor;
         currentState.toolbarColor = builder.toolbarColor;
+        currentState.logo=builder.logo;
+        currentState.navigationIcon=builder.navigationIcon;
     }
 
     private ToolbarState initPrevState(Toolbar toolbar) {
@@ -94,15 +110,7 @@ public class MultiMode {
         prevState.logo=toolbar.getLogo();
         prevState.navigationIcon=toolbar.getNavigationIcon();
 
-        Menu menu=toolbar.getMenu();
-        if(menu!=null) {
-            if(menu.size()>0) {
-                prevState.menuItems=new HashSet<>(menu.size());
-                for(int index=0;index<menu.size();index++) {
-                    prevState.menuItems.add(menu.getItem(index));
-                }
-            }
-        }
+
         return prevState;
     }
 
@@ -129,32 +137,52 @@ public class MultiMode {
 
         private Toolbar toolbar;
         private String title=DEFAULT_TITLE;
-        private int toolbarColor=-1;
-        private int icon;
-        private int menuId;
+        private int toolbarColor;
+        private int statusBarColor;
+        private Drawable navigationIcon;
+        private Drawable logo;
+        private int menuId=-1;
 
-        public Builder(@NonNull Toolbar toolbar, int menuId) {
+        private Callback callback;
+        private Activity activity;
+
+        public Builder(@NonNull Toolbar toolbar, @NonNull Activity activity) {
             this.toolbar=toolbar;
-            this.menuId=menuId;
+            this.activity=activity;
             if(toolbar.getBackground()!=null) {
                 toolbarColor=((ColorDrawable)(toolbar.getBackground())).getColor();
             }
+            this.navigationIcon=toolbar.getNavigationIcon();
+            this.logo=toolbar.getLogo();
         }
 
-        public Builder setMenuId(int menuId) {
-            this.menuId=menuId;
+        public Builder setMenu(int menuId, @NonNull Callback callback) {
+            this.menuId = menuId;
+            this.callback=callback;
             return this;
         }
 
-        public Builder setIcon(int icon) {
-            if(icon>0) {
-                this.icon = icon;
+        public Builder setNavigationIcon(Drawable navigationIcon) {
+            if(navigationIcon!=null) {
+                this.navigationIcon = navigationIcon;
             }
             return this;
         }
 
-        public Builder setColor(int color) {
+        public Builder setLogo(Drawable logo) {
+            if (logo != null) {
+                this.logo = logo;
+            }
+            return this;
+        }
+
+        public Builder setBackgroundColor(int color) {
             this.toolbarColor = color;
+            return this;
+        }
+
+        public Builder setStatusBarColor(int statusBarColor) {
+            this.statusBarColor=statusBarColor;
             return this;
         }
 
@@ -169,6 +197,15 @@ public class MultiMode {
         }
     }
 
+    private void savePrevMenuState() {
+        Menu menu=actionBar.getMenu();
+        if(menu!=null) {
+            prevState.menuItems=new HashSet<>(menu.size());
+            for(int index=0;index<menu.size();index++) {
+                prevState.menuItems.add(menu.getItem(index));
+            }
+        }
+    }
 
     void turnOn() {
         isActivated=true;
@@ -186,7 +223,14 @@ public class MultiMode {
             actionBar.setAlpha(1.f);
         }
 
-        actionBar.inflateMenu(currentState.menuId);
+        actionBar.setNavigationIcon(currentState.navigationIcon);
+        actionBar.setLogo(currentState.logo);
+
+        if(currentState.menuId!=-1) {
+            savePrevMenuState();
+            actionBar.inflateMenu(currentState.menuId);
+            actionBar.setOnMenuItemClickListener(callback);
+        }
 
     }
 
@@ -205,22 +249,52 @@ public class MultiMode {
         actionBar.setTitle(Integer.toString(itemCount)+currentState.title);
         if(!isColored) {
             isColored = true;
+            if(currentState.statusBarColor!=0) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    Window window = activity.getWindow();
+                    window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                    window.setStatusBarColor(currentState.statusBarColor);
+                }
+            }
             actionBar.setBackgroundColor(currentState.toolbarColor);
         }
+    }
+
+    void setAdapter(BaseAdapter adapter) {
+        adapterInstance=adapter;
     }
 
     void turnOff() {
         isActivated=false;
         isColored=false;
 
-        Menu menu=actionBar.getMenu();
-        for(int index=0;index<menu.size();index++) {
-            MenuItem item=menu.getItem(index);
-            if(prevState.menuItems==null||!prevState.menuItems.contains(item)) {
-                menu.removeItem(item.getItemId());
+        if(currentState.menuId!=-1) {
+            Menu menu = actionBar.getMenu();
+            Log.d(TAG,"Menu set size:"+Integer.toString(prevState.menuItems.size()));
+            List<MenuItem> menuItemList=new LinkedList<>();
+            for (int index = 0; index < menu.size(); index++) {
+                MenuItem item = menu.getItem(index);
+                if (prevState.menuItems == null || !prevState.menuItems.contains(item)) {
+                    menuItemList.add(item);
+                }
+            }
+
+            if(!menuItemList.isEmpty()) {
+                for (MenuItem item : menuItemList) {
+                    menu.removeItem(item.getItemId());
+                }
             }
         }
 
+        actionBar.setNavigationIcon(prevState.navigationIcon);
+        actionBar.setLogo(prevState.logo);
+        if(prevState.statusBarColor!=0) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                Window window = activity.getWindow();
+                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                window.setStatusBarColor(prevState.statusBarColor);
+            }
+        }
         actionBar.setBackgroundColor(prevState.toolbarColor);
         actionBar.setTitle(prevState.title);
         actionBar.setSubtitle(prevState.subTitle);
@@ -228,5 +302,16 @@ public class MultiMode {
 
     boolean isActivated() {
         return isActivated;
+    }
+
+    public static abstract class Callback implements Toolbar.OnMenuItemClickListener {
+
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            return onMenuItemClick(adapterInstance,item);
+        }
+
+        public abstract boolean onMenuItemClick(BaseAdapter adapter, MenuItem item);
+
     }
 }

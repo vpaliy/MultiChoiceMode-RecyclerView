@@ -8,7 +8,10 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -34,24 +37,36 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void initUI(Bundle savedInstanceState) {
-
-        if(getSupportActionBar()==null) {
-            actionBar = (Toolbar) (findViewById(R.id.actionBar));
-            setSupportActionBar(actionBar);
-            if(getSupportActionBar()!=null) {
-                getSupportActionBar().setDisplayShowTitleEnabled(true);
-                getSupportActionBar().setHomeButtonEnabled(true);
-                getSupportActionBar().setShowHideAnimationEnabled(true);
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            }
-            actionBar.setNavigationOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    onBackPressed();
-                }
-            });
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(adapter!=null) {
+            adapter.onResume();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main,menu);
+        return true;
+    }
+
+    private void initUI(Bundle savedInstanceState) {
+        Log.d(TAG,"initUI is called");
+        actionBar = (Toolbar) (findViewById(R.id.actionBar));
+        setSupportActionBar(actionBar);
+        if(getSupportActionBar()!=null) {
+            getSupportActionBar().setDisplayShowTitleEnabled(true);
+            getSupportActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setShowHideAnimationEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+        actionBar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
 
         int[] rawData=new int[]{R.drawable.eleven, R.drawable.fifteen, R.drawable.five,
                 R.drawable.four, R.drawable.fourteen, R.drawable.seven, R.drawable.seventeen,
@@ -60,11 +75,33 @@ public class MainActivity extends AppCompatActivity {
 
         RecyclerView recyclerView=(RecyclerView)(findViewById(R.id.recyclerView));
         recyclerView.setLayoutManager(new GridLayoutManager(this,getResources().
-            getInteger(R.integer.span_size),GridLayoutManager.VERTICAL,false));
-        MultiMode mode=new MultiMode.Builder(actionBar,R.menu.list_menu)
-                        .setColor(Color.WHITE)
-                        .build();
+                getInteger(R.integer.span_size),GridLayoutManager.VERTICAL,false));
+
+        //initialize using builder approach
+        MultiMode mode=new MultiMode.Builder(actionBar,this)
+                .setMenu(R.menu.list_menu,new MultiMode.Callback() {
+                    @Override
+                    public boolean onMenuItemClick(BaseAdapter adapter, MenuItem item) {
+                        if(adapter!=null) {
+                            switch (item.getItemId()) {
+                                case R.id.checkAll:
+                                    adapter.checkAll(true);
+                                    return true;
+                                case R.id.unCheckAll:
+                                    adapter.unCheckAll(true);
+                                    return true;
+                            }
+                        }
+                        return true;
+                    }
+                })
+                .setStatusBarColor(Color.MAGENTA)
+                .setBackgroundColor(Color.WHITE)
+                .setNavigationIcon(getResources().getDrawable(R.drawable.ic_clear_black_24dp))
+                .build();
+
         recyclerView.setItemAnimator(null);
+        // recyclerView.setHasFixedSize(true);
         if(savedInstanceState!=null) {
             adapter=new Adapter(this,mode,rawData,savedInstanceState);
         }else {
@@ -127,11 +164,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onBindData() {
                 Glide.with(itemView.getContext())
-                    .load(arrayData[getAdapterPosition()%arrayData.length])
-                    .asBitmap()
-                    .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                    .thumbnail(0.5f)
-                    .centerCrop().into(image);
+                        .load(arrayData[getAdapterPosition() % arrayData.length])
+                        .asBitmap()
+                        .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                        .thumbnail(0.5f)
+                        .centerCrop().into(image);
                 determineState();
             }
 
@@ -144,9 +181,9 @@ public class MainActivity extends AppCompatActivity {
             public void enterState() {
                 super.enterState();
                 itemView.animate()
-                    .scaleX(SCALE_F)
-                    .scaleY(SCALE_F)
-                    .setDuration(180);
+                        .scaleX(SCALE_F)
+                        .scaleY(SCALE_F)
+                        .setDuration(180);
             }
 
             @Override
@@ -183,8 +220,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        Log.d(TAG,"onSaveInstanceState called");
         adapter.saveState(outState);
         super.onSaveInstanceState(outState);
-
     }
 }

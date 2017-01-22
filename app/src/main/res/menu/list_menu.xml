@@ -1,10 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item
-        android:id="@+id/fourth"
-        app:showAsAction="never"
-        android:title="Fourth"/>
 
+    <item
+        android:id="@+id/delete"
+        app:showAsAction="never"
+        android:title="@string/deleteItems"/>
+
+    <item
+        android:id="@+id/unCheckAll"
+        app:showAsAction="never"
+        android:title="@string/deselectItems"/>
+
+    <item
+        android:id="@+id/checkAll"
+        app:showAsAction="never"
+        android:title="@string/selectItems"/>
+
+
+
+
+
+
+
+    <item
+        android:id="@+id/delete1"
+        app:showAsAction="never"
+        android:title="@string/deleteItems"/>
+
+    <item
+        android:id="@+id/unCheckAll1"
+        app:showAsAction="never"
+        android:title="@string/deselectItems"/>
+
+    <item
+        android:id="@+id/checkAll1"
+        app:showAsAction="never"
+        android:title="@string/selectItems"/>
+
+
+
+
+
+    <item
+        android:id="@+id/delete11"
+        app:showAsAction="never"
+        android:title="@string/deleteItems"/>
+
+    <item
+        android:id="@+id/unCheckAll11"
+        app:showAsAction="never"
+        android:title="@string/deselectItems"/>
+
+    <item
+        android:id="@+id/checkAll11"
+        app:showAsAction="never"
+        android:title="@string/selectItems"/>
 
 </menu>

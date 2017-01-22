@@ -20,6 +20,8 @@ class StateTracker implements Parcelable {
 
     private int checkedItemCount;
 
+    private BaseAdapter adapterInstance;
+
 
     StateTracker(){}
 
@@ -82,7 +84,7 @@ class StateTracker implements Parcelable {
     }
 
 
-    int[] getSelectedItemArray() {
+    int[] getSelectedItemArray(boolean cancel, boolean deletion) {
         if(checkedItemCount==0)
             return null;
         int[] selectedItemArray = new int[stateMap.size()];
@@ -90,21 +92,26 @@ class StateTracker implements Parcelable {
         for (int index = 0; index < stateMap.size(); index++) {
             int state=stateMap.get(stateMap.keyAt(index));
             if ((state==ENTER)||(state==ANIMATED)) {
-                stateMap.put(stateMap.keyAt(index),EXIT); //TODO EXIT only for visible items on the screen
+                if(cancel) {
+                     stateMap.put(stateMap.keyAt(index),EXIT); //TODO EXIT only for visible items on the screen
+                }
                 selectedItemArray[jIndex++] = stateMap.keyAt(index);
             }
         }
 
         Arrays.sort(selectedItemArray,0,jIndex);
+        if(!deletion) {
+            return Arrays.copyOfRange(selectedItemArray, 0, jIndex);
+        }
         int itemShift=0;
         int[] resultArray=new int[jIndex];
 
         for(int index=0;index<jIndex;index++,itemShift++)
             resultArray[index]=selectedItemArray[index]-itemShift;
 
-        checkedItemCount=0;
         return resultArray;
     }
+
 
 
     @Override
