@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 
 public abstract class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.BaseViewHolder> {
@@ -20,11 +19,13 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.BaseV
     private boolean isAnimationEnabled=false;
 
 
+
     public BaseAdapter(@NonNull MultiMode mode, boolean isAnimationEnabled) {
         this.mode=mode;
         mode.setAdapter(this);
         this.isAnimationEnabled=isAnimationEnabled;
         this.tracker=new StateTracker();
+
     }
 
     //This constructor has to be called only to restore previous state
@@ -34,7 +35,7 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.BaseV
         this.isAnimationEnabled=isAnimationEnabled;
         tracker=savedInstanceState.getParcelable(KEY);
         if(tracker==null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("You didn't save the state of adapter");
         }
 
         isScreenRotation=true;
@@ -51,7 +52,6 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.BaseV
 
     public void onResume() {
         if(isOnResume) {
-            Log.d(TAG,"onResume()");
             if (tracker.getCheckedItemCount() > 0) {
                 mode.turnOn();
                 mode.update(tracker.getCheckedItemCount());
@@ -65,7 +65,6 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.BaseV
 
         public BaseViewHolder(View itemView) {
             super(itemView);
-
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
 
@@ -160,6 +159,7 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.BaseV
         for(int index=0;index<getItemCount();index++) {
             tracker.setStateFor(index,animate?StateTracker.ENTER:StateTracker.ANIMATED);
             notifyItemChanged(index);
+
         }
     }
 
@@ -177,15 +177,42 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.BaseV
         }
     }
 
+    private void update(int[] updateIndices) {
+        for(int index:updateIndices) {
+            notifyItemChanged(index);
+        }
+    }
+
     public int[] getAllCheckedForDeletion() {
-        return tracker.getSelectedItemArray(true,true);
+        int[] result=tracker.getSelectedItemArray(true);
+        update(result);
+        if(mode.isActivated()) {
+            mode.turnOff();
+        }
+        //shift the items
+        int itemShift=0;
+        int jIndex=result.length;
+        int[] resultArray=new int[jIndex];
+
+        for(int index=0;index<jIndex;index++,itemShift++)
+            resultArray[index]=result[index]-itemShift;
+
+        return resultArray;
     }
 
     public int[] getAllChecked(boolean cancel) {
-        return tracker.getSelectedItemArray(cancel,false);
+        int[] result=tracker.getSelectedItemArray(cancel);
+        if(cancel) {
+            update(result);
+            if (mode.isActivated()) {
+                mode.turnOff();
+            }
+        }
+        return result;
     }
 
-    //TODO also save a position of adapter
+    public abstract void removeAt(int index);
+
     public void saveState(@NonNull Bundle outState) {
         if(mode.isActivated()) {
             mode.turnOff();

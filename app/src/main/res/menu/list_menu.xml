@@ -17,4 +17,8 @@
         app:showAsAction="never"
         android:title="@string/selectItems"/>
 
+    <item
+        android:id="@+id/share"
+        android:title="@string/shareItems"/>
+
 </menu>

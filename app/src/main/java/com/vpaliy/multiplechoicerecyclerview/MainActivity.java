@@ -8,14 +8,12 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.vpaliy.multiplechoice.BaseAdapter;
@@ -52,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initUI(Bundle savedInstanceState) {
-        Log.d(TAG,"initUI is called");
         actionBar = (Toolbar) (findViewById(R.id.actionBar));
         setSupportActionBar(actionBar);
         if(getSupportActionBar()!=null) {
@@ -68,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        int[] rawData=new int[]{R.drawable.eleven, R.drawable.fifteen, R.drawable.five,
+        final int[] rawList= new int[]{R.drawable.eleven, R.drawable.fifteen, R.drawable.five,
                 R.drawable.four, R.drawable.fourteen, R.drawable.seven, R.drawable.seventeen,
                 R.drawable.six, R.drawable.sixteen, R.drawable.ten, R.drawable.thirt, R.drawable.three,
                 R.drawable.two};
@@ -90,6 +87,18 @@ public class MainActivity extends AppCompatActivity {
                                 case R.id.unCheckAll:
                                     adapter.unCheckAll(true);
                                     return true;
+                                case R.id.share:
+                                    adapter.getAllChecked(true);
+                                    break;
+                                case R.id.delete: {
+                                    int[] deleteIndices = adapter.getAllCheckedForDeletion();
+                                    if(deleteIndices!=null) {
+                                        for(int index:deleteIndices) {
+                                        //    adapter.removeAt(index);
+                                        }
+                                    }
+                                    return true;
+                                }
                             }
                         }
                         return false;
@@ -100,12 +109,12 @@ public class MainActivity extends AppCompatActivity {
                 .setNavigationIcon(getResources().getDrawable(R.drawable.ic_clear_black_24dp))
                 .build();
 
+
         recyclerView.setItemAnimator(null);
-        recyclerView.setHasFixedSize(true);
         if(savedInstanceState!=null) {
-            adapter=new Adapter(this,mode,rawData,savedInstanceState);
+            adapter=new Adapter(this,mode,rawList,savedInstanceState);
         }else {
-            adapter = new Adapter(this, mode, rawData);
+            adapter = new Adapter(this, mode, rawList);
         }
         recyclerView.setAdapter(adapter);
 
@@ -125,21 +134,21 @@ public class MainActivity extends AppCompatActivity {
 
     public class Adapter extends BaseAdapter {
 
-        private int[] arrayData;
+        private int[] rawList;
         private LayoutInflater inflater;
 
         private static final float SCALE_F=0.85f;
 
-        public Adapter(Context context,MultiMode mode, int[] arrayData) {
+        public Adapter(Context context,MultiMode mode, int[] rawList) {
             super(mode,true);
             inflater=LayoutInflater.from(context);
-            this.arrayData=arrayData;
+            this.rawList=rawList;
         }
 
-        public Adapter(Context context, MultiMode mode, int[] arrayData, @NonNull Bundle savedInstanceState) {
+        public Adapter(Context context, MultiMode mode, int[] rawList, @NonNull Bundle savedInstanceState) {
             super(mode,true,savedInstanceState);
             inflater=LayoutInflater.from(context);
-            this.arrayData=arrayData;
+            this.rawList=rawList;
         }
 
         @Override
@@ -164,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onBindData() {
                 Glide.with(itemView.getContext())
-                        .load(arrayData[getAdapterPosition() % arrayData.length])
+                        .load(rawList[getAdapterPosition() % rawList.length])
                         .asBitmap()
                         .diskCacheStrategy(DiskCacheStrategy.RESULT)
                         .thumbnail(0.5f)
@@ -202,6 +211,7 @@ public class MainActivity extends AppCompatActivity {
                             .scaleY(1.f)
                             .setDuration(180);
                 }
+
             }
 
             @Override
@@ -212,15 +222,26 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        public void removeAt(int index) {
+            int[] temp=new int[rawList.length-1];
+            int currIndex=0;
+            for(int jIndex=0;jIndex<rawList.length;jIndex++){
+                if(jIndex==index)
+                    continue;
+                temp[currIndex++]=rawList[jIndex];
+            }
+            rawList=temp;
+            notifyItemRemoved(index);
+        }
+
         @Override
         public int getItemCount() {
-            return 4*arrayData.length;
+            return 4*rawList.length;
         }
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        Log.d(TAG,"onSaveInstanceState called");
         super.onSaveInstanceState(outState);
         adapter.saveState(outState);
     }
