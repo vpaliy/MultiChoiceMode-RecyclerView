@@ -15,6 +15,7 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.BaseV
     private MultiMode mode;
     private final StateTracker tracker;
 
+    private boolean isOnResume=true;
     private boolean isScreenRotation=false;
     private boolean isAnimationEnabled=false;
 
@@ -37,9 +38,9 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.BaseV
         }
 
         isScreenRotation=true;
+        isOnResume=false;
 
         if(tracker.getCheckedItemCount()>0) {
-            Log.d(TAG,"turnedOn()");
             mode.turnOn();
         }else {
             isScreenRotation = false;
@@ -49,10 +50,14 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.BaseV
     }
 
     public void onResume() {
-        if(tracker.getCheckedItemCount()>0) {
-            mode.turnOn();
-            mode.update(tracker.getCheckedItemCount());
+        if(isOnResume) {
+            Log.d(TAG,"onResume()");
+            if (tracker.getCheckedItemCount() > 0) {
+                mode.turnOn();
+                mode.update(tracker.getCheckedItemCount());
+            }
         }
+        isOnResume=true;
     }
 
     public abstract class BaseViewHolder extends RecyclerView.ViewHolder

@@ -20,9 +20,6 @@ class StateTracker implements Parcelable {
 
     private int checkedItemCount;
 
-    private BaseAdapter adapterInstance;
-
-
     StateTracker(){}
 
     public StateTracker(Parcel in) {

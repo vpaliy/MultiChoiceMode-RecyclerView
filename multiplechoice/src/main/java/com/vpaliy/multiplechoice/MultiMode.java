@@ -227,9 +227,14 @@ public class MultiMode {
         actionBar.setLogo(currentState.logo);
 
         if(currentState.menuId!=-1) {
-            savePrevMenuState();
-            actionBar.inflateMenu(currentState.menuId);
-            actionBar.setOnMenuItemClickListener(callback);
+            actionBar.post(new Runnable() {
+                @Override
+                public void run() {
+                    savePrevMenuState();
+                    actionBar.inflateMenu(currentState.menuId);
+                    actionBar.setOnMenuItemClickListener(callback);
+                }
+            });
         }
 
     }
@@ -270,7 +275,6 @@ public class MultiMode {
 
         if(currentState.menuId!=-1) {
             Menu menu = actionBar.getMenu();
-            Log.d(TAG,"Menu set size:"+Integer.toString(prevState.menuItems.size()));
             List<MenuItem> menuItemList=new LinkedList<>();
             for (int index = 0; index < menu.size(); index++) {
                 MenuItem item = menu.getItem(index);

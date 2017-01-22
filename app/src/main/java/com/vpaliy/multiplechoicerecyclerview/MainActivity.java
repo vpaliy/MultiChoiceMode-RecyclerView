@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main,menu);
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     private void initUI(Bundle savedInstanceState) {
@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
                                     return true;
                             }
                         }
-                        return true;
+                        return false;
                     }
                 })
                 .setStatusBarColor(Color.MAGENTA)
@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         recyclerView.setItemAnimator(null);
-        // recyclerView.setHasFixedSize(true);
+        recyclerView.setHasFixedSize(true);
         if(savedInstanceState!=null) {
             adapter=new Adapter(this,mode,rawData,savedInstanceState);
         }else {
@@ -221,7 +221,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         Log.d(TAG,"onSaveInstanceState called");
-        adapter.saveState(outState);
         super.onSaveInstanceState(outState);
+        adapter.saveState(outState);
     }
 }
