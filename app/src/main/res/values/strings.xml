@@ -1,6 +1,10 @@
 <resources>
+
+    <!-- Utils -->
     <string name="app_name">MultipleChoiceRecyclerView</string>
     <string name="example">Example</string>
+    <string name="header">Examples of using this API</string>
+
     <!-- Adapter menu -->
     <string name="deselectItems">Deselect all</string>
     <string name="deleteItems">Delete</string>
@@ -10,4 +14,9 @@
     <!--Main menu -->
     <string name="mainItem">Main</string>
 
+    <!-- Navigation menu -->
+    <string name="galleryExample">Simple Gallery</string>
+    <string name="listExample">List</string>
+    <string name="mixedExample">Mixed Gallery</string>
+    <string name="animatedExample">Animated Gallery</string>
 </resources>

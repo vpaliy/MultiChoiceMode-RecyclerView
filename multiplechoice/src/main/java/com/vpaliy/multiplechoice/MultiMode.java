@@ -317,4 +317,6 @@ public class MultiMode {
         public abstract boolean onMenuItemClick(BaseAdapter adapter, MenuItem item);
 
     }
+
+
 }
