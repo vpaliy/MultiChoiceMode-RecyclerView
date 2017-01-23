@@ -140,6 +140,61 @@ Basically, you need to do the following steps in order to make it work:
         }
     }
    ```
+ ### Understanding of animation in the `BaseAdapter.BaseViewHolder` class ###
+ 
+ If you decide to animate an item upon click, you have to understand how it works. Basically, there are 4 states of the item:<br>
+ 
+  1) `Enter` state<br>
+     This state represents an animation that has to occur when an item is clicked.
+     For example, you can use this implementation of the method:
+     
+  ```java   
+       @Override
+       public void enterState() {
+          super.enterState();
+          itemView.animate()
+            .scaleX(0.85f)
+            .scaleY(0.85f)
+            .setDuration(180).start();
+       }
+  ```
+  
+  2) `Animated` state<br>
+    This is a state of an item that has been animated, and doesn't need this animation again. So, the main purpose of this method is to put a view into the animated state.<br>
+   ```java   
+        @Override
+        public void animatedState() {
+          itemView.setScale(0.85f);
+          itemView.setScale(0.85f);
+        }
+   ```
+   
+  3) `Exit` state<br>
+     This state is responsible for animating a view in the normal state, some kind of back animation. Here is the example:<br>
+   ```java   
+        @Override
+        public void exitState() {
+          super.exitState();
+          itemView.animate()
+            .scaleX(1.f)
+            .scaleY(1.f)
+            .setDuration(180).start();
+        }
+   ```
+   
+  3) `Default` state<br>
+      That is a default or normal state of your item. The following method can be a representation of such state:
+      
+  ```java   
+        @Override
+        public void defaultState() {
+           if(itemView.getScale()<1.f){
+              itemView.setScale(1.f);
+              itemView.setScale(1.f);
+            }
+        }
+   ```
+      
  
 
   
