@@ -104,7 +104,7 @@ Basically, you need to do the following steps in order to make it work:
  <br>
  
  
- ### Understanding of animation in the `BaseAdapter.BaseViewHolder` class ###
+### Understanding of animation in the `BaseAdapter.BaseViewHolder` class ###
  
 If you decide to animate an item upon click, you have to understand how it works. Basically, there are 4 states of the item:<br>
  
