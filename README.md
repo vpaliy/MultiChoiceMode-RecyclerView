@@ -101,8 +101,9 @@ Basically, you need to do the following steps in order to make it work:
         }
      }
     ```
-  
- ### What if screen rotation occurs? ###
+ <br>
+ 
+### What if screen rotation occurs? ###
   
 As long as you have a reference to your adapter, screen rotation is not a big deal. You can easily save and restore the state of the adapter using the following code:
  
@@ -139,8 +140,10 @@ As long as you have a reference to your adapter, screen rotation is not a big de
             adapter.onResume();
         }
     }
-   ```
- ### Understanding of animation in the `BaseAdapter.BaseViewHolder` class ###
+
+    ```
+   
+### Understanding of animation in the `BaseAdapter.BaseViewHolder` class ###
  
 If you decide to animate an item upon click, you have to understand how it works. Basically, there are 4 states of the item:<br>
  
