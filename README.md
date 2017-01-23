@@ -6,6 +6,12 @@ This repository provides an API for creating a multiple choice mode in `Recycler
 ## A brief glance at the sample ##
 ![](https://github.com/vpaliyX/MultiChoiceMode-RecyclerView/blob/master/art/ezgif.com-video-to-gif%20(5).gif)
 
+# Get on Google Play #
+<a href="https://play.google.com/store/apps/details?id=com.vpaliy.multiplechoicerecyclerview">
+<img src="https://github.com/chrisbanes/PhotoView/blob/master/art/google-play-badge-small.png" />
+</a>
+
+
 
 ## How does it work? ##
 
