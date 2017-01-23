@@ -104,7 +104,7 @@ Basically, you need to do the following steps in order to make it work:
   
  ### What if screen rotation occurs? ###
   
-  As long as you have a reference to your adapter, screen rotation is not a big deal. You can easily save and restore the state of the adapter using the following code:
+As long as you have a reference to your adapter, screen rotation is not a big deal. You can easily save and restore the state of the adapter using the following code:
  
  * Save the state:
    ```java
@@ -142,7 +142,7 @@ Basically, you need to do the following steps in order to make it work:
    ```
  ### Understanding of animation in the `BaseAdapter.BaseViewHolder` class ###
  
- If you decide to animate an item upon click, you have to understand how it works. Basically, there are 4 states of the item:<br>
+If you decide to animate an item upon click, you have to understand how it works. Basically, there are 4 states of the item:<br>
  
   1) `Enter` state<br>
      This state represents an animation that has to occur when an item is clicked.
@@ -182,7 +182,7 @@ Basically, you need to do the following steps in order to make it work:
         }
    ```
    
-  3) `Default` state<br>
+  4) `Default` state<br>
       That is a default or normal state of your item. The following method can be a representation of such state:
       
   ```java   
@@ -194,10 +194,36 @@ Basically, you need to do the following steps in order to make it work:
             }
         }
    ```
-      
- 
+  
+Once again, if you don't want to animate items, you are not obliged to implement those methods.
 
+
+
+## License ##
+
+``````
+MIT License
+
+Copyright (c) 2016 Vasyl Paliy
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+``````
   
   
-      
       
