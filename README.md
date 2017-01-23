@@ -1,6 +1,6 @@
 # MultiChoiceMode-RecyclerView
 
-[![API](https://img.shields.io/badge/API-12%2B-blue.svg?style=flat)](https://android-arsenal.com/api?level=12) <br>
+[![API](https://img.shields.io/badge/API-11%2B-blue.svg?style=flat)](https://android-arsenal.com/api?level=11) <br>
 This repository provides an API for creating a multiple choice mode in `RecyclerView`.
 
 ## A brief glance at the sample ##
