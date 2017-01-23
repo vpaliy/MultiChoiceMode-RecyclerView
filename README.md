@@ -103,47 +103,8 @@ Basically, you need to do the following steps in order to make it work:
     ```
  <br>
  
-### What if screen rotation occurs? ###
-  
-As long as you have a reference to your adapter, screen rotation is not a big deal. You can easily save and restore the state of the adapter using the following code:
  
- * Save the state:
-   ```java
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        adapter.saveState(outState);
-    }    
-    ```
- * Restore:
-    ```java   
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        //do some stuff$
-        
-        if(savedInstanceState!=null){
-          adapter=new Adapter(mode,true,savedInstanceState);
-        }else{
-          adapter=new Adapter(mode,true);
-        }
-    }
-    ```
-  
- Also you need to keep in mind that activity can be stopped by launching another app or receiving a phone call.
- In this particular case that is not a problem as well, as long as you keep the reference to your adapter, you can restore it:
-    ```java   
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if(adapter!=null){
-            adapter.onResume();
-        }
-    }
-
-    ```
-   
-### Understanding of animation in the `BaseAdapter.BaseViewHolder` class ###
+ ### Understanding of animation in the `BaseAdapter.BaseViewHolder` class ###
  
 If you decide to animate an item upon click, you have to understand how it works. Basically, there are 4 states of the item:<br>
  
@@ -200,7 +161,49 @@ If you decide to animate an item upon click, you have to understand how it works
   
 Once again, if you don't want to animate items, you are not obliged to implement those methods.
 
+ 
+### What if screen rotation occurs? ###
+  
+As long as you have a reference to your adapter, screen rotation is not a big deal. You can easily save and restore the state of the adapter using the following code:
+ 
+ * Save the state:
+ 
+   ```java
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        adapter.saveState(outState);
+    }    
+    ```
+    
+ * Restore:
+    ```java   
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        //do some stuff$
+        
+        if(savedInstanceState!=null){
+          adapter=new Adapter(mode,true,savedInstanceState);
+        }else{
+          adapter=new Adapter(mode,true);
+        }
+    }
+    ```
+  
+ Also you need to keep in mind that activity can be stopped by launching another app or receiving a phone call.
+ In this particular case that is not a problem as well, as long as you keep the reference to your adapter, you can restore it:
+    ```java   
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(adapter!=null){
+            adapter.onResume();
+        }
+    }
 
+    ```
+   
 
 ## License ##
 
