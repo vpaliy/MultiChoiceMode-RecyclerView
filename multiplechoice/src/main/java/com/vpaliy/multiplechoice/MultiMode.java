@@ -1,6 +1,5 @@
 package com.vpaliy.multiplechoice;
 
-
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
@@ -20,12 +19,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import com.vpaliy.studioq.R;
 
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-
 
 
 public class MultiMode {
@@ -250,7 +249,7 @@ public class MultiMode {
             vibrator.vibrate(vibrationLength);
         }
 
-        actionBar.setTitle(Integer.toString(itemCount)+currentState.title);
+        actionBar.setTitle(Integer.toString(itemCount) + currentState.title);
         if(!isColored) {
             isColored = true;
             if(currentState.statusBarColor!=0) {
@@ -268,7 +267,7 @@ public class MultiMode {
         adapterInstance=adapter;
     }
 
-    void turnOff() {
+    void  turnOff() {
         isActivated=false;
         isColored=false;
 
@@ -289,18 +288,23 @@ public class MultiMode {
             }
         }
 
-        actionBar.setNavigationIcon(prevState.navigationIcon);
-        actionBar.setLogo(prevState.logo);
-        if(prevState.statusBarColor!=0) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                Window window = activity.getWindow();
-                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                window.setStatusBarColor(prevState.statusBarColor);
+        actionBar.post(new Runnable() {
+            @Override
+            public void run() {
+                actionBar.setNavigationIcon(prevState.navigationIcon);
+                actionBar.setLogo(prevState.logo);
+                if(prevState.statusBarColor!=0) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        Window window = activity.getWindow();
+                        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                        window.setStatusBarColor(prevState.statusBarColor);
+                    }
+                }
+                actionBar.setBackgroundColor(prevState.toolbarColor);
+                actionBar.setTitle(prevState.title);
+                actionBar.setSubtitle(prevState.subTitle);
             }
-        }
-        actionBar.setBackgroundColor(prevState.toolbarColor);
-        actionBar.setTitle(prevState.title);
-        actionBar.setSubtitle(prevState.subTitle);
+        });
     }
 
     boolean isActivated() {
@@ -313,10 +317,8 @@ public class MultiMode {
         public boolean onMenuItemClick(MenuItem item) {
             return onMenuItemClick(adapterInstance,item);
         }
-
+        
         public abstract boolean onMenuItemClick(BaseAdapter adapter, MenuItem item);
 
     }
-
-
 }
