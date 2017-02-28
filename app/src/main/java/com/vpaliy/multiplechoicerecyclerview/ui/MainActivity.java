@@ -19,16 +19,24 @@ import com.vpaliy.multiplechoicerecyclerview.adapters.MixedGalleryAdapter;
 import com.vpaliy.multiplechoicerecyclerview.adapters.SimpleGalleryAdapter;
 import com.vpaliy.multiplechoicerecyclerview.utils.DataProvider;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
+import static butterknife.ButterKnife.findById;
+
 
 public class MainActivity extends AppCompatActivity {
 
-
-    private static final String TAG=MainActivity.class.getSimpleName();
     private static final String CURRENT_EXAMPLE="example";
 
+    @BindView(R.id.actionBar)
+    protected Toolbar actionBar;
+
+    @BindView(R.id.recyclerView)
+    protected RecyclerView recyclerView;
+
+
     private BaseAdapter adapter;
-    private Toolbar actionBar;
-    private RecyclerView recyclerView;
     private MultiMode mode;
     private int currentExample;
 
@@ -36,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 
         if(savedInstanceState!=null) {
             currentExample = savedInstanceState.getInt(CURRENT_EXAMPLE);
@@ -65,8 +74,6 @@ public class MainActivity extends AppCompatActivity {
         initActionBar();
         initNavigation();
 
-
-        recyclerView=(RecyclerView)(findViewById(R.id.recyclerView));
         recyclerView.setLayoutManager(new GridLayoutManager(this,getResources().
                 getInteger(R.integer.span_size),GridLayoutManager.VERTICAL,false));
 
@@ -135,7 +142,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void initActionBar() {
-        actionBar = (Toolbar) (findViewById(R.id.actionBar));
         actionBar.setTitle(R.string.example);
         setSupportActionBar(actionBar);
         if(getSupportActionBar()!=null) {
@@ -154,8 +160,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void initNavigation() {
 
-        final DrawerLayout layout=(DrawerLayout)(findViewById(R.id.drawerLayout));
-        NavigationView navigationView=(NavigationView)(findViewById(R.id.navigation));
+        final DrawerLayout layout=findById(this,R.id.drawerLayout);
+        NavigationView navigationView=findById(this,R.id.navigation);
         navigationView.setCheckedItem(currentExample);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override

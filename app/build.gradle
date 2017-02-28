@@ -1,15 +1,19 @@
 apply plugin: 'com.android.application'
 
+def config = rootProject.ext.configuration
+def libs = rootProject.ext.libraries;
+def test = rootProject.ext.testingLibraries;
+
 android {
-    compileSdkVersion 24
-    buildToolsVersion "24.0.1"
+    compileSdkVersion config.compileSdkVersion
+    buildToolsVersion config.buildToolsVersion
 
     defaultConfig {
-        applicationId "com.vpaliy.multiplechoicerecyclerview"
-        minSdkVersion 12
-        targetSdkVersion 24
-        versionCode 1
-        versionName "1.0"
+        applicationId config.applicationId
+        minSdkVersion config.minSdkVersion
+        targetSdkVersion config.targetSdkVersion
+        versionCode config.versionCode
+        versionName config.versionName
     }
     buildTypes {
         release {
@@ -20,12 +24,22 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(":multiplechoice")
-    testCompile 'junit:junit:4.12'
-    compile 'com.android.support:design:+'
-    compile 'com.github.bumptech.glide:glide:3.7.0'
-    compile 'com.squareup:otto:1.3.8'
-    compile 'com.android.support:recyclerview-v7:+'
-    compile 'com.android.support:appcompat-v7:24.2.1'
+
+    /* Android */
+    compile "com.android.support:cardview-v7:${libs.supportVersion}"
+    compile "com.android.support:recyclerview-v7:${libs.supportVersion}"
+    compile "com.android.support:appcompat-v7:${libs.supportVersion}"
+    compile "com.android.support:design:${libs.supportVersion}"
+    compile "com.android.support:palette-v7:${libs.supportVersion}"
+
+
+    /* Additional  */
+    compile "com.squareup:otto:${libs.ottoEventBus}"
+    compile "com.github.bumptech.glide:glide:${libs.glide}"
+    compile "com.jakewharton:butterknife:${libs.butterKnife}"
+    annotationProcessor "com.jakewharton:butterknife-compiler:${libs.butterKnife}"
+
+    /* Test */
+    testCompile "junit:junit:${test.jUnit}"
 }

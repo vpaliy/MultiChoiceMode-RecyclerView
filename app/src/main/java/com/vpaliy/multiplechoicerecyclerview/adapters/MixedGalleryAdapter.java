@@ -16,6 +16,9 @@ import com.vpaliy.multiplechoice.MultiMode;
 import com.vpaliy.multiplechoicerecyclerview.R;
 import com.vpaliy.multiplechoicerecyclerview.utils.DataProvider;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class MixedGalleryAdapter extends GalleryAdapter {
 
     private static final float SCALE_F=0.85f;
@@ -40,13 +43,15 @@ public class MixedGalleryAdapter extends GalleryAdapter {
 
     public class ViewHolder extends BaseAdapter.BaseViewHolder {
 
-        private ImageView image;
-        private ImageView icon;
+        @BindView(R.id.image)
+        ImageView image;
+
+        @BindView(R.id.icon)
+        ImageView icon;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            image=(ImageView)(itemView.findViewById(R.id.image));
-            icon=(ImageView)(itemView.findViewById(R.id.icon));
+            ButterKnife.bind(this,itemView);
         }
 
         @Override

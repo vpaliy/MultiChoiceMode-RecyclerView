@@ -16,6 +16,9 @@ import com.vpaliy.multiplechoice.MultiMode;
 import com.vpaliy.multiplechoicerecyclerview.R;
 import com.vpaliy.multiplechoicerecyclerview.utils.DataProvider;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class GalleryAdapter extends BaseAdapter {
 
     protected int[] rawList;
@@ -47,11 +50,12 @@ public class GalleryAdapter extends BaseAdapter {
 
     public class ViewHolder extends BaseAdapter.BaseViewHolder {
 
-        private ImageView image;
+        @BindView(R.id.image)
+        ImageView image;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            image=(ImageView)(itemView);
+            ButterKnife.bind(this,itemView);
         }
 
         @Override

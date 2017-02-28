@@ -12,12 +12,7 @@ public class DataProvider {
     }
 
     //NOTE
-    /**
-     * I could have used a simple List<Integer> here,
-     * which obviously would be a better option because I wouldn't have used so many time-consuming methods like Arrays.copyOfRange() or whatever
-     * However, If I had used List<Integer> in this case,
-     * I would end up with an exception every time when I try to use List.remove(int index) method
-     */
+
     public int[] rawImageData() {
         return new int[]{R.drawable.eleven, R.drawable.fifteen, R.drawable.five,
                 R.drawable.four, R.drawable.fourteen, R.drawable.seven, R.drawable.seventeen,
