@@ -199,7 +199,8 @@ As long as you have a reference to your adapter, screen rotation is not a big de
   
  Also you need to keep in mind that activity can be stopped by launching another app or receiving a phone call.
  In this particular case that is not a problem as well, as long as you keep the reference to your adapter, you can restore it:
-    ```java   
+ 
+   ```java   
     @Override
     protected void onResume() {
         super.onResume();
@@ -207,8 +208,7 @@ As long as you have a reference to your adapter, screen rotation is not a big de
             adapter.onResume();
         }
     }
-
-    ```
+   ```
    
 
 ## License ##
