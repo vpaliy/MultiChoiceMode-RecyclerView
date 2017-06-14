@@ -28,7 +28,7 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.BaseV
 
     }
 
-    //This constructor has to be called only to restore previous state
+    //This constructor has to be called only to restore the previous state
     public BaseAdapter(@NonNull MultiMode mode, boolean isAnimationEnabled, @NonNull Bundle savedInstanceState) {
         this.mode=mode;
         mode.setAdapter(this);

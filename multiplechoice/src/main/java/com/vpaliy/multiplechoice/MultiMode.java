@@ -19,7 +19,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import com.vpaliy.studioq.R;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -60,7 +59,7 @@ public class MultiMode {
         Context context=actionBar.getContext();
         if (ContextCompat.checkSelfPermission(actionBar.getContext(),
                 Manifest.permission.VIBRATE) == PermissionChecker.PERMISSION_GRANTED) {
-            vibrator = (Vibrator)context.getSystemService(Context.VIBRATOR_SERVICE);
+            vibrator = Vibrator.class.cast(context.getSystemService(Context.VIBRATOR_SERVICE));
         }
 
     }

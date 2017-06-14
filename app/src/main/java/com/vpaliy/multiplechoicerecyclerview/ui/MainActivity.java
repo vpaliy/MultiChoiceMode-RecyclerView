@@ -2,6 +2,7 @@ package com.vpaliy.multiplechoicerecyclerview.ui;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,16 +19,17 @@ import com.vpaliy.multiplechoicerecyclerview.adapters.GalleryAdapter;
 import com.vpaliy.multiplechoicerecyclerview.adapters.MixedGalleryAdapter;
 import com.vpaliy.multiplechoicerecyclerview.adapters.SimpleGalleryAdapter;
 import com.vpaliy.multiplechoicerecyclerview.utils.DataProvider;
+import com.vpaliy.multiplechoicerecyclerview.utils.MarginDecoration;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import icepick.Icepick;
+import icepick.State;
 
 import static butterknife.ButterKnife.findById;
 
 
 public class MainActivity extends AppCompatActivity {
-
-    private static final String CURRENT_EXAMPLE="example";
 
     @BindView(R.id.actionBar)
     protected Toolbar actionBar;
@@ -35,24 +37,19 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.recyclerView)
     protected RecyclerView recyclerView;
 
-
     private BaseAdapter adapter;
     private MultiMode mode;
-    private int currentExample;
+
+    @State
+    protected int currentExample;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-
-        if(savedInstanceState!=null) {
-            currentExample = savedInstanceState.getInt(CURRENT_EXAMPLE);
-        }else {
-            currentExample = R.id.animatedGallery;    //by default
-        }
+        Icepick.restoreInstanceState(this,savedInstanceState);
         initUI(savedInstanceState);
-
     }
 
     @Override
@@ -74,10 +71,7 @@ public class MainActivity extends AppCompatActivity {
         initActionBar();
         initNavigation();
 
-        recyclerView.setLayoutManager(new GridLayoutManager(this,getResources().
-                getInteger(R.integer.span_size),GridLayoutManager.VERTICAL,false));
-
-        //initialize using builder approach
+        recyclerView.addItemDecoration(new MarginDecoration(this));
         mode=new MultiMode.Builder(actionBar,this)
                 .setMenu(R.menu.list_menu,new MultiMode.Callback() {
                     @Override
@@ -109,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
                 })
                 .setStatusBarColor(Color.MAGENTA)
                 .setBackgroundColor(Color.WHITE)
-                .setNavigationIcon(getResources().getDrawable(R.drawable.ic_clear_black_24dp))
+                .setNavigationIcon(ContextCompat.getDrawable(this,R.drawable.ic_clear))
                 .build();
 
 
@@ -143,53 +137,44 @@ public class MainActivity extends AppCompatActivity {
 
     private void initActionBar() {
         actionBar.setTitle(R.string.example);
+        actionBar.setTitleTextColor(ContextCompat.getColor(this,R.color.colorWhite));
         setSupportActionBar(actionBar);
         if(getSupportActionBar()!=null) {
             getSupportActionBar().setDisplayShowTitleEnabled(true);
             getSupportActionBar().setHomeButtonEnabled(true);
-            getSupportActionBar().setShowHideAnimationEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-        actionBar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onBackPressed();
-            }
-        });
+        actionBar.setNavigationOnClickListener(click -> onBackPressed());
     }
 
     private void initNavigation() {
-
-        final DrawerLayout layout=findById(this,R.id.drawerLayout);
+        DrawerLayout layout=findById(this,R.id.drawerLayout);
         NavigationView navigationView=findById(this,R.id.navigation);
         navigationView.setCheckedItem(currentExample);
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                adapter.unCheckAll(false);
-                switch (item.getItemId()) {
-                    case R.id.animatedGallery:
-                        currentExample=R.id.animatedGallery;
-                        adapter=provideAdapter(null);
-                        recyclerView.setAdapter(adapter);
-                        actionBar.setTitle(R.string.animatedExample);
-                        break;
-                    case R.id.simpleGallery:
-                        currentExample=R.id.simpleGallery;
-                        adapter=provideAdapter(null);
-                        recyclerView.setAdapter(adapter);
-                        actionBar.setTitle(R.string.galleryExample);
-                        break;
-                    case R.id.mixedGallery:
-                        currentExample=R.id.mixedGallery;
-                        adapter=provideAdapter(null);
-                        recyclerView.setAdapter(adapter);
-                        actionBar.setTitle(R.string.mixedExample);
-                        break;
-                }
-                layout.closeDrawers();
-                return true;
+        navigationView.setNavigationItemSelectedListener(item-> {
+            adapter.unCheckAll(false);
+            switch (item.getItemId()) {
+                case R.id.animatedGallery:
+                    currentExample=R.id.animatedGallery;
+                    adapter=provideAdapter(null);
+                    recyclerView.setAdapter(adapter);
+                    actionBar.setTitle(R.string.animatedExample);
+                    break;
+                case R.id.simpleGallery:
+                    currentExample=R.id.simpleGallery;
+                    adapter=provideAdapter(null);
+                    recyclerView.setAdapter(adapter);
+                    actionBar.setTitle(R.string.galleryExample);
+                    break;
+                case R.id.mixedGallery:
+                    currentExample=R.id.mixedGallery;
+                    adapter=provideAdapter(null);
+                    recyclerView.setAdapter(adapter);
+                    actionBar.setTitle(R.string.mixedExample);
+                    break;
             }
+            layout.closeDrawers();
+            return true;
         });
     }
 
@@ -210,6 +195,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         adapter.saveState(outState);
-        outState.putInt(CURRENT_EXAMPLE,currentExample);
+        Icepick.saveInstanceState(this, outState);
     }
 }

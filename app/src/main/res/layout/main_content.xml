@@ -25,6 +25,8 @@
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView"
+        app:layoutManager="GridLayoutManager"
+        app:spanCount="@integer/span_size"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_below="@+id/actionBar"
         android:layout_width="match_parent"

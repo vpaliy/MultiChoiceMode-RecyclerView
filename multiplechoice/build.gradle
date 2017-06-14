@@ -15,7 +15,6 @@ android {
         versionCode config.versionCode
         versionName config.versionName
     }
-
 }
 
 dependencies {
